@@ -2,6 +2,9 @@
 
 Project made with Ionic and Cordova
 
+This cross mobile application is made to control your Discord Music Bot.
+Here is the bot it controls: [MusicBot](https://github.com/Just-Some-Bots/MusicBot)
+
 ### Get started coding
 
 - Install [Visual Studio 2017](https://www.visualstudio.com/downloads/)
