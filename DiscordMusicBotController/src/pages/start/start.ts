@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { NavController, NavParams, MenuController } from 'ionic-angular';
 
 /*
   Generated class for the start page.
@@ -13,10 +13,18 @@ import { NavController, NavParams } from 'ionic-angular';
 })
 export class StartPage {
 
-    constructor(public navCtrl: NavController, public navParams: NavParams) { }
+    constructor(public navCtrl: NavController, public navParams: NavParams, private menu: MenuController) { }
 
     ionViewDidLoad() {
         console.log('ionViewDidLoad startPage');
+    }
+
+    ionViewDidEnter() {
+      this.menu.swipeEnable(false);
+    }
+
+    ionViewWillLeave() {
+      this.menu.swipeEnable(true);
     }
 
 }

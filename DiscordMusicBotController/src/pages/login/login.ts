@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { DiscordApiProvider } from '../../providers/DiscordApi';
 import { AlertsProvider } from '../../providers/Alerts';
-import { LoadingController, NavController, Platform, NavParams } from 'ionic-angular';
+import { LoadingController, NavController, Platform, NavParams, MenuController } from 'ionic-angular';
 import { HomePage } from '../home/home';
 import { RegisterPage } from '../register/register';
 
@@ -24,7 +24,8 @@ export class LoginPage {
     public navCtrl: NavController,
     public navParams: NavParams,
     public discordApi: DiscordApiProvider,
-    public alerts: AlertsProvider
+    public alerts: AlertsProvider,
+    private menu: MenuController
   ) { }
 
   ionViewDidLoad() {
@@ -41,25 +42,6 @@ export class LoginPage {
     this.discordApi.post("v6/auth/login", this.loginEntry, true).then(
       data => {
         if (data) {
-          //this.discordApi.saveApiOauthInfo(data);
-          //let getTokenBody = {
-          //  'grant_type': "password",
-          //  'client_id': data.client.id,
-          //  'client_secret': data.client_secret,
-          //  'username': data.user.email,
-          //  'password': data.password,
-          //  'scope': null
-          //};
-          //this.discordApi.getApiToken(getTokenBody).then((result) => {
-          //  if (result.success == true) {
-          //    loader.dismiss();
-          //    this.navCtrl.setRoot(HomePage, { justLoggedIn: true });
-          //  }
-          //  else {
-          //    loader.dismiss();
-          //    this.alerts.showErrorAlert(data.message, "Log In");
-          //  }
-          //});
           this.discordApi.saveApiToken(data.token)
             .then((result) => {
               loader.dismiss();
@@ -85,6 +67,14 @@ export class LoginPage {
         this.alerts.showErrorAlert(error, "Log In");
       }
     );
+  }
+
+  ionViewDidEnter() {
+    this.menu.swipeEnable(false);
+  }
+
+  ionViewWillLeave() {
+    this.menu.swipeEnable(true);
   }
 
 }

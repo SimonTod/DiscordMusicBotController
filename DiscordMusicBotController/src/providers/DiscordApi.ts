@@ -135,28 +135,6 @@ export class DiscordApiProvider {
       });
   }
 
-  //async getApiToken(body: any): Promise<any> {
-  //  let returnData = { success: null, message: "" };
-  //  return this.post("oauth/token", body, true).then(
-  //    data => {
-  //      if (data) {
-  //        this.saveApiToken(data.access_token);
-  //        returnData.success = true;
-  //      }
-  //      else {
-  //        returnData.success = true;
-  //        returnData.message = "err 1";
-  //      }
-  //      return returnData;
-  //    },
-  //    error => {
-  //      returnData.success = true;
-  //      returnData.message = error;
-  //      return returnData;
-  //    }
-  //  );
-  //}
-
   //'Borrowed' from //https://angular.io/docs/ts/latest/guide/server-communication.html
   private extractData(res: Response) {
     //Convert the response to JSON format
@@ -180,27 +158,7 @@ export class DiscordApiProvider {
     return this.storage.get('bearer');
   }
 
-  //public saveApiOauthInfo(oauthInfo: any) {
-  //  this.storage.set("oauthClient_id", oauthInfo.client.id);
-  //  this.storage.set("oauthClient_secret", oauthInfo.client_secret);
-  //  this.storage.set("username", oauthInfo.user.email);
-  //  this.storage.set("password", oauthInfo.password);
-  //}
-
-  //private getApiOauthInfo() {
-  //  return {
-  //    'oauthClient_id': this.storage.get('oauthClient_id'),
-  //    'oauthClient_secret': this.storage.get('oauthClient_secret'),
-  //    'username': this.storage.get('username'),
-  //    'password': this.storage.get('password')
-  //  }
-  //}
-
   public clearStorage() {
-    //this.storage.remove("oauthClient_id");
-    //this.storage.remove("oauthClient_secret");
-    //this.storage.remove("username");
-    //this.storage.remove("password");
     this.storage.remove("bearer");
   }
 

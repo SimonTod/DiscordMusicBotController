@@ -56,9 +56,4 @@ export class HomePage {
     }
   }
 
-  logout() {
-    this.discordApi.clearStorage();
-    this.nav.setRoot(LoginPage);
-  }
-
 }
