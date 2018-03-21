@@ -262,3 +262,7 @@ __pycache__/
 
 **/simulation/*
 lesgermes_ionic2/build\.json
+
+*.keystore
+
+DiscordMusicBotController/build\.json

@@ -57,13 +57,25 @@ export class HomePage {
   }
 
   Pause() {
+    this.SendCommand(this.discordApi.Commands.pause);
+  }
+
+  Resume() {
+    this.SendCommand(this.discordApi.Commands.resume);
+  }
+
+  Next() {
+    this.SendCommand(this.discordApi.Commands.next);
+  }
+
+  SendCommand(command: string, url: string = null) {
     let loader = this.loadingCtrl.create({
       content: "Sending command"
     });
     loader.present();
 
     try {
-      this.discordApi.sendCommand(this.discordApi.Commands.pause)
+      this.discordApi.sendCommand(command, url)
         .then((data) => {
           loader.dismiss();
         })
