@@ -14,6 +14,13 @@ import 'rxjs/add/operator/toPromise';
 @Injectable()
 export class DiscordApiProvider {
 
+  Commands = {
+    play: "play",
+    pause: "pause",
+    resume: "resume",
+    next: "skip"
+  }
+
   private ApiEndPoint = 'https://discordapp.com/api/';
 
   constructor(public http: Http, public storage: Storage) {
@@ -97,6 +104,28 @@ export class DiscordApiProvider {
         .then(this.extractData)
         .catch(this.handleError);
     }
+  }
+
+  async sendCommand(type: string, url?: string) {
+    var command = "";
+    switch (type) {
+      case this.Commands.play:
+        if (url == undefined || url == null)
+          throw new Error("url missing");
+        command = "!play " + url;
+        break;
+      default:
+        command = "!" + type.toString();
+        break;
+    }
+
+    var body = { content: command };
+
+    this.storage.get('channel')
+      .then((channelId) => {
+        return this.post('channels/' + channelId + '/messages', body);
+      })
+      .catch(err => { throw err });
   }
 
   private BuildURLParametersString(parameters: any): string {

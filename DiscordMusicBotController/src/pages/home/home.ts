@@ -56,4 +56,29 @@ export class HomePage {
     }
   }
 
+  Pause() {
+    let loader = this.loadingCtrl.create({
+      content: "Sending command"
+    });
+    loader.present();
+
+    try {
+      this.discordApi.sendCommand(this.discordApi.Commands.pause)
+        .then((data) => {
+          loader.dismiss();
+        })
+        .catch(err => {
+          loader.dismiss();
+          console.error('Error Home');
+          console.dir(err);
+          this.alerts.showErrorAlert(err, "Home");
+        });
+    } catch (e) {
+      loader.dismiss();
+      console.error('Error Home');
+      console.dir(e);
+      this.alerts.showErrorAlert(e, "Home");
+    }
+  }
+
 }
