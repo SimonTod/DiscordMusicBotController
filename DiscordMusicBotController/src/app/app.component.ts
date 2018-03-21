@@ -5,6 +5,8 @@ import { StatusBar, Splashscreen } from 'ionic-native';
 import { StartPage } from '../pages/start/start';
 import { HomePage } from '../pages/home/home';
 import { LoginPage } from '../pages/login/login';
+import { ConfigurationPage } from '../pages/configuration/configuration';
+
 import { AlertsProvider } from '../providers/Alerts';
 import { DiscordApiProvider } from '../providers/DiscordApi';
 
@@ -33,7 +35,7 @@ export class MyApp {
 
       this.pages = [
         { title: 'Home', component: HomePage },
-        //{ title: 'Configuration', component: ConfigurationPage }
+        { title: 'Configuration', component: ConfigurationPage }
       ]
 
       this.onInit();

@@ -34,7 +34,7 @@ export class LoginPage {
 
   loginForm() {
     let loader = this.loadingCtrl.create({
-      content: "Connexion"
+      content: "Connection"
     });
     //Show the loading indicator
     loader.present();

@@ -5,6 +5,8 @@ import { MyApp } from './app.component';
 import { StartPage } from '../pages/start/start';
 import { HomePage } from '../pages/home/home';
 import { LoginPage } from '../pages/login/login';
+import { ConfigurationPage } from '../pages/configuration/configuration';
+import { ConfigurePage } from '../pages/configure/configure';
 import { DiscordApiProvider } from '../providers/DiscordApi';
 import { AlertsProvider } from '../providers/Alerts';
 
@@ -13,7 +15,9 @@ import { AlertsProvider } from '../providers/Alerts';
     MyApp,
     StartPage,
     HomePage,
-    LoginPage
+    LoginPage,
+    ConfigurationPage,
+    ConfigurePage
   ],
   imports: [
     IonicModule.forRoot(MyApp),
@@ -24,7 +28,9 @@ import { AlertsProvider } from '../providers/Alerts';
     MyApp,
     StartPage,
     HomePage,
-    LoginPage
+    LoginPage,
+    ConfigurationPage,
+    ConfigurePage
   ],
   providers: [DiscordApiProvider, AlertsProvider, { provide: ErrorHandler, useClass: IonicErrorHandler }]
 })
