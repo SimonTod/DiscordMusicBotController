@@ -5,7 +5,7 @@ import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs';
 import { DiscordApiProvider } from '../../providers/DiscordApi';
 
-export var YOUTUBE_API_KEY: string = 'AIzaSyDOfT_BO81aEZScosfTYMruJobmpjqNeEk'; //fix -> needs to be changed
+export var YOUTUBE_API_KEY: string = 'AIzaSyBcLc8vplFhLYnCpU1v4xS4EgdmHuEf8Es';
 export var YOUTUBE_API_URL: string = 'https://www.googleapis.com/youtube/v3/search';
 
 class SearchResult {
