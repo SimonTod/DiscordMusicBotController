@@ -58,47 +58,18 @@ export class HomePage {
   }
 
   Pause() {
-    this.SendCommand(this.discordApi.Commands.pause);
+    this.discordApi.sendCommand(this.discordApi.Commands.pause);
   }
 
   Resume() {
-    this.SendCommand(this.discordApi.Commands.resume);
+    this.discordApi.sendCommand(this.discordApi.Commands.resume);
   }
 
   Next() {
-    this.SendCommand(this.discordApi.Commands.next);
-  }
-
-  SendCommand(command: string, url: string = null) {
-    let loader = this.loadingCtrl.create({
-      content: "Sending command"
-    });
-    loader.present();
-
-    try {
-      this.discordApi.sendCommand(command, url)
-        .then((data) => {
-          loader.dismiss();
-        })
-        .catch(err => {
-          loader.dismiss();
-          console.error('Error Home');
-          console.dir(err);
-          this.alerts.showErrorAlert(err, "Home");
-        });
-    } catch (e) {
-      loader.dismiss();
-      console.error('Error Home');
-      console.dir(e);
-      this.alerts.showErrorAlert(e, "Home");
-    }
+    this.discordApi.sendCommand(this.discordApi.Commands.next);
   }
 
   Youtube() {
-    this.nav.push(YoutubePage, { callback: this.SearchCallback });
-  }
-
-  SearchCallback(url) {
-    this.SendCommand(this.discordApi.Commands.play, url);
+    this.nav.push(YoutubePage);
   }
 }

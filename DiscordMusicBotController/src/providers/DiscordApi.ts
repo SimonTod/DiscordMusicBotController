@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, Headers } from '@angular/http';
+import { LoadingController } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
@@ -23,7 +24,7 @@ export class DiscordApiProvider {
 
   private ApiEndPoint = 'https://discordapp.com/api/';
 
-  constructor(public http: Http, public storage: Storage) {
+  constructor(public http: Http, public storage: Storage, public loadingCtrl: LoadingController) {
     console.log('Hello DiscordApi Provider');
   }
 
@@ -107,11 +108,18 @@ export class DiscordApiProvider {
   }
 
   async sendCommand(type: string, url?: string) {
+    let loader = this.loadingCtrl.create({
+      content: "Sending command"
+    });
+    loader.present();
+
     var command = "";
     switch (type) {
       case this.Commands.play:
-        if (url == undefined || url == null)
+        if (url == undefined || url == null) {
+          loader.dismiss();
           throw new Error("url missing");
+        }
         command = "!play " + url;
         break;
       default:
@@ -123,9 +131,11 @@ export class DiscordApiProvider {
 
     this.storage.get('channel')
       .then((channelId) => {
-        return this.post('channels/' + channelId + '/messages', body);
+        this.post('channels/' + channelId + '/messages', body).then((result) => {
+          loader.dismiss();
+        });
       })
-      .catch(err => { throw err });
+      .catch(err => { loader.dismiss(); throw err; });
   }
 
   private BuildURLParametersString(parameters: any): string {

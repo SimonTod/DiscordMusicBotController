@@ -3,7 +3,7 @@ import { NavController, NavParams } from 'ionic-angular';
 import { Injectable, OnInit, ElementRef, EventEmitter, Inject } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs';
-import { HomePage } from '../home/home';
+import { DiscordApiProvider } from '../../providers/DiscordApi';
 
 export var YOUTUBE_API_KEY: string = 'AIzaSyDOfT_BO81aEZScosfTYMruJobmpjqNeEk'; //fix -> needs to be changed
 export var YOUTUBE_API_URL: string = 'https://www.googleapis.com/youtube/v3/search';
@@ -139,6 +139,15 @@ export class SearchBox implements OnInit {
 
 export class SearchResultComponent {
   result: SearchResult;
+
+  constructor(public navCtrl: NavController, public discordApi: DiscordApiProvider) {
+
+  }
+
+  Play(videoUrl) {
+    this.discordApi.sendCommand(this.discordApi.Commands.play, videoUrl);
+    this.navCtrl.pop();
+  }
 }
 
 @Component({
