@@ -9,6 +9,7 @@ import { ConfigurationPage } from '../pages/configuration/configuration';
 import { ConfigurePage } from '../pages/configure/configure';
 import { DiscordApiProvider } from '../providers/DiscordApi';
 import { AlertsProvider } from '../providers/Alerts';
+import { YoutubePage, youTubeServiceInjectables, SearchResultComponent, SearchBox } from '../pages/youtube/youtube';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,10 @@ import { AlertsProvider } from '../providers/Alerts';
     HomePage,
     LoginPage,
     ConfigurationPage,
-    ConfigurePage
+    ConfigurePage,
+    YoutubePage,
+    SearchResultComponent,
+    SearchBox
   ],
   imports: [
     IonicModule.forRoot(MyApp),
@@ -30,8 +34,14 @@ import { AlertsProvider } from '../providers/Alerts';
     HomePage,
     LoginPage,
     ConfigurationPage,
-    ConfigurePage
+    ConfigurePage,
+    YoutubePage,
+    SearchResultComponent,
+    SearchBox
   ],
-  providers: [DiscordApiProvider, AlertsProvider, { provide: ErrorHandler, useClass: IonicErrorHandler }]
+  providers: [DiscordApiProvider, AlertsProvider, youTubeServiceInjectables, { provide: ErrorHandler, useClass: IonicErrorHandler }],
+  exports: [
+    YoutubePage
+  ]
 })
 export class AppModule { }
