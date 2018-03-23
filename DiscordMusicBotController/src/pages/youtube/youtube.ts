@@ -8,7 +8,7 @@ import { DiscordApiProvider } from '../../providers/DiscordApi';
 export var YOUTUBE_API_KEY: string = 'AIzaSyBcLc8vplFhLYnCpU1v4xS4EgdmHuEf8Es';
 export var YOUTUBE_API_URL: string = 'https://www.googleapis.com/youtube/v3/search';
 
-class SearchResult {
+class YoutubeSearchResult {
   id: string;
   title: string;
   description: string;
@@ -37,7 +37,7 @@ export class YouTubeService {
     @Inject(YOUTUBE_API_URL) private apiUrl: string) {
   }
 
-  search(query: string): Observable<SearchResult[]> {
+  search(query: string): Observable<YoutubeSearchResult[]> {
     let params: string = [
       `q=${query}`,
       `key=${this.apiKey}`,
@@ -49,7 +49,7 @@ export class YouTubeService {
     return this.http.get(queryUrl)
       .map((response: Response) => {
         return (<any>response.json()).items.map(item => {
-          return new SearchResult({
+          return new YoutubeSearchResult({
             id: item.id.videoId,
             title: item.snippet.title,
             description: item.snippet.description,
@@ -70,16 +70,16 @@ export var youTubeServiceInjectables: Array<any> = [
 
 @Component({
   outputs: ['loading', 'results'],
-  selector: 'search-box',
+  selector: 'youtube-search-box',
   template: `
    <p>Enter something in the field and see the asynchronous results!</p>
    <input type="text" class="form-control" placeholder="Search" autofocus>
  `
 })
 
-export class SearchBox implements OnInit {
+export class YoutubeSearchBox implements OnInit {
   loading: EventEmitter<boolean> = new EventEmitter<boolean>();
-  results: EventEmitter<SearchResult[]> = new EventEmitter<SearchResult[]>();
+  results: EventEmitter<YoutubeSearchResult[]> = new EventEmitter<YoutubeSearchResult[]>();
 
   constructor(public youtube: YouTubeService,
     private el: ElementRef) {
@@ -94,7 +94,7 @@ export class SearchBox implements OnInit {
       .map((query: string) => this.youtube.search(query))
       .switch()
       .subscribe(
-      (results: SearchResult[]) => {
+      (results: YoutubeSearchResult[]) => {
         this.loading.next(false);
         this.results.next(results);
       },
@@ -111,7 +111,7 @@ export class SearchBox implements OnInit {
 
 @Component({
   inputs: ['result'],
-  selector: 'search-result',
+  selector: 'youtube-search-result',
   template: `
   <ion-card>
     <ion-item>
@@ -137,8 +137,8 @@ export class SearchBox implements OnInit {
  `
 })
 
-export class SearchResultComponent {
-  result: SearchResult;
+export class YoutubeSearchResultComponent {
+  result: YoutubeSearchResult;
 
   constructor(public navCtrl: NavController, public discordApi: DiscordApiProvider) {
 
@@ -165,9 +165,9 @@ export class YoutubePage {
     console.log('ionViewDidLoad YoutubePage');
   }
 
-  results: SearchResult[];
+  results: YoutubeSearchResult[];
 
-  updateResults(results: SearchResult[]): void {
+  updateResults(results: YoutubeSearchResult[]): void {
     this.results = results;
   }
 }

@@ -1,25 +1,25 @@
 <ion-header>
   <ion-navbar>
-    <ion-title>YouTube API</ion-title>
+    <ion-title>Spotify API</ion-title>
   </ion-navbar>
 </ion-header>
 <ion-content padding>
   <div class='container'>
     <div class="page-header">
       <h2>
-        YouTube Search
+        Spotify Search
       </h2>
     </div>
     <div class="row">
       <div class="input-group input-group-lg col-md-12">
-        <youtube-search-box (loading)="loading = $event"
-                    (results)="updateResults($event)"></youtube-search-box>
+        <spotify-search-box (loading)="loading = $event"
+                    (results)="updateResults($event)"></spotify-search-box>
       </div>
     </div>
     <div class="row">
-      <youtube-search-result *ngFor="let result of results"
+      <spotify-search-result *ngFor="let result of results"
                      [result]="result">
-      </youtube-search-result>
+      </spotify-search-result>
     </div>
   </div>
 </ion-content>

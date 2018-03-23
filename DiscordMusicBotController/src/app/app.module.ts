@@ -9,7 +9,8 @@ import { ConfigurationPage } from '../pages/configuration/configuration';
 import { ConfigurePage } from '../pages/configure/configure';
 import { DiscordApiProvider } from '../providers/DiscordApi';
 import { AlertsProvider } from '../providers/Alerts';
-import { YoutubePage, youTubeServiceInjectables, SearchResultComponent, SearchBox } from '../pages/youtube/youtube';
+import { YoutubePage, youTubeServiceInjectables, YoutubeSearchResultComponent, YoutubeSearchBox } from '../pages/youtube/youtube';
+import { SpotifyPage, spotifyServiceInjectables, SpotifySearchResultComponent, SpotifySearchBox } from '../pages/spotify/spotify';
 
 @NgModule({
   declarations: [
@@ -20,8 +21,11 @@ import { YoutubePage, youTubeServiceInjectables, SearchResultComponent, SearchBo
     ConfigurationPage,
     ConfigurePage,
     YoutubePage,
-    SearchResultComponent,
-    SearchBox
+    YoutubeSearchResultComponent,
+    YoutubeSearchBox,
+    SpotifyPage,
+    SpotifySearchResultComponent,
+    SpotifySearchBox
   ],
   imports: [
     IonicModule.forRoot(MyApp),
@@ -36,12 +40,15 @@ import { YoutubePage, youTubeServiceInjectables, SearchResultComponent, SearchBo
     ConfigurationPage,
     ConfigurePage,
     YoutubePage,
-    SearchResultComponent,
-    SearchBox
+    YoutubeSearchResultComponent,
+    YoutubeSearchBox,
+    SpotifyPage,
+    SpotifySearchResultComponent,
+    SpotifySearchBox
   ],
-  providers: [DiscordApiProvider, AlertsProvider, youTubeServiceInjectables, { provide: ErrorHandler, useClass: IonicErrorHandler }],
+  providers: [DiscordApiProvider, AlertsProvider, youTubeServiceInjectables, spotifyServiceInjectables, { provide: ErrorHandler, useClass: IonicErrorHandler }],
   exports: [
-    YoutubePage
+    YoutubePage, SpotifyPage
   ]
 })
 export class AppModule { }
