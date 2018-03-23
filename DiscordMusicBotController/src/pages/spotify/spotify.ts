@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 import { Injectable, OnInit, ElementRef, EventEmitter, Inject } from '@angular/core';
 import { Http, Response, Headers } from '@angular/http';
-import { Storage } from '@ionic/storage';
 import { Observable } from 'rxjs';
 import { DiscordApiProvider } from '../../providers/DiscordApi';
 import 'rxjs/add/operator/map';
@@ -39,7 +38,6 @@ class SpotifySearchResult {
     this.artists = obj && obj.artists || null;
     this.album = obj && obj.album || null;
     this.uri = obj && obj.uri || null
-
   }
 }
 
@@ -60,8 +58,9 @@ export class SpotifyService {
 
   constructor (
     public http: Http,
-    public tokenService: SpotifyTokenService,
-    public storage: Storage,
+    @Inject(SPOTIFY_CLIENT_ID) private clientId: string,
+    @Inject(SPOTIFY_CLIENT_SECRET) private clientSecret: string,
+    @Inject(OAUTH_TOKEN_URL) private oauthTokenUrl,
     @Inject(API_BASE) private apiBase
   ) {
 
@@ -74,15 +73,11 @@ export class SpotifyService {
     ].join('&');
     let queryUrl: string = `${this.apiBase}search?${params}`;
 
-    //let headers = new Headers({
-    //  'Authorization': `${token.token_type} ${token.access_token}`
-    //});
-
-    //return this.http.get(queryUrl, { headers: headers })
-    return this.http.get(queryUrl)
+    return Observable.fromPromise(this.getToken())
+      .flatMap(token => this.http.get(queryUrl, { headers: new Headers({ 'Authorization': `${token.token_type} ${token.access_token}` }) }))
       .map((response: Response) => {
-        return (<any>response.json()).track.items.map(item => {
-          var artists: Array<string>;
+        return (<any>response.json()).tracks.items.map(item => {
+          var artists = new Array<string>();
           for (var i = 0; i < item.artists.length; i++) {
             artists.push(item.artists[i].name);
           }
@@ -101,40 +96,7 @@ export class SpotifyService {
           });
         });
       });
-    
   }
-}
-
-@Injectable()
-export class SpotifyTokenService {
-
-  constructor(
-    public http: Http,
-    @Inject(SPOTIFY_CLIENT_ID) private clientId: string,
-    @Inject(SPOTIFY_CLIENT_SECRET) private clientSecret: string,
-    @Inject(OAUTH_TOKEN_URL) private oauthTokenUrl,
-    @Inject(API_BASE) private apiBase
-  ) {
-
-  }
-
-  //getToken() {
-  //  let params: string = "grant_type=client_credentials";
-  //  let headers = new Headers({
-  //    'Authorization': "Basic " + btoa(this.clientId + ":" + this.clientSecret),
-  //    'Content-Type': "application/x-www-form-urlencoded"
-  //  });
-
-  //  return this.http.post(this.oauthTokenUrl, params, { headers: headers })
-  //    .map((response: Response) => {
-  //      return (<any>response.json()).map(item => {
-  //        return new Token({
-  //          access_token: item.access_token,
-  //          token_type: item.token_type
-  //        });
-  //      });
-  //    });
-  //}
 
   getToken(): Promise<Token> {
     let params: string = "grant_type=client_credentials";
@@ -154,12 +116,10 @@ export class SpotifyTokenService {
         return Promise.reject(res.json().error || res.message || res);
       });
   }
-
 }
 
 export var spotifyServiceInjectables: Array<any> = [
   { provide: SpotifyService, useClass: SpotifyService },
-  //{ provide: SpotifyTokenService, useClass: SpotifyTokenService },
   { provide: SPOTIFY_CLIENT_ID, useValue: SPOTIFY_CLIENT_ID },
   { provide: SPOTIFY_CLIENT_SECRET, useValue: SPOTIFY_CLIENT_SECRET },
   { provide: OAUTH_TOKEN_URL, useValue: OAUTH_TOKEN_URL },
