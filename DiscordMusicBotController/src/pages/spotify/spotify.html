@@ -13,13 +13,33 @@
     <div class="row">
       <div class="input-group input-group-lg col-md-12">
         <spotify-search-box (loading)="loading = $event"
-                    (results)="updateResults($event)"></spotify-search-box>
+                            (tracksResults)="updateTracksResults($event)"
+                            (albumsResults)="updateAlbumsResults($event)"></spotify-search-box>
       </div>
     </div>
-    <div class="row">
-      <spotify-search-result *ngFor="let result of results"
-                     [result]="result">
-      </spotify-search-result>
+    <div padding>
+      <ion-segment [(ngModel)]="type">
+        <ion-segment-button value="tracks">
+          Tracks
+        </ion-segment-button>
+        <ion-segment-button value="albums">
+          Albums
+        </ion-segment-button>
+      </ion-segment>
     </div>
+    <div [ngSwitch]="type">
+      <div class="row" *ngSwitchCase="'tracks'">
+        <spotify-tracks-search-result *ngFor="let result of tracksResults"
+                               [result]="result">
+        </spotify-tracks-search-result>
+      </div>
+
+      <div class="row" *ngSwitchCase="'albums'">
+        <spotify-albums-search-result *ngFor="let result of albumsResults"
+                                      [result]="result">
+        </spotify-albums-search-result>
+      </div>
+    </div>
+
   </div>
 </ion-content>

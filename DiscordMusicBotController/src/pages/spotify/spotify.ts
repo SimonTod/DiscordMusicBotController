@@ -23,12 +23,12 @@ class Token {
   }
 }
 
-class SpotifySearchResult {
+class SpotifyTrackSearchResult {
   id: string;
   name: string;
   type: string;
   artists: Array<string>;
-  album: Album;
+  album: SpotifyAlbumSearchResult;
   uri: string;
 
   constructor(obj?: any) {
@@ -37,19 +37,23 @@ class SpotifySearchResult {
     this.type = obj && obj.type || null;
     this.artists = obj && obj.artists || null;
     this.album = obj && obj.album || null;
-    this.uri = obj && obj.uri || null
+    this.uri = obj && obj.uri || null;
   }
 }
 
-class Album {
+class SpotifyAlbumSearchResult {
   id: string;
   name: string;
   image: string;
+  artists: Array<string>;
+  uri: string;
 
   constructor(obj?: any) {
     this.id = obj && obj.id || null;
     this.name = obj && obj.name || null;
     this.image = obj && obj.image || null;
+    this.artists = obj && obj.artists || null;
+    this.uri = obj && obj.uri || null;
   }
 }
 
@@ -66,7 +70,7 @@ export class SpotifyService {
 
   }
 
-  search(query: string): Observable<SpotifySearchResult[]> {
+  searchTracks(query: string): Observable<SpotifyTrackSearchResult[]> {
     let params: string = [
       `q=${query}`,
       `type=track`
@@ -81,18 +85,44 @@ export class SpotifyService {
           for (var i = 0; i < item.artists.length; i++) {
             artists.push(item.artists[i].name);
           }
-          var album = new Album({
+          var album = new SpotifyAlbumSearchResult({
             id: item.album.id,
             name: item.album.name,
-            image: item.album.images[0].url
+            image: item.album.images[0].url,
           })
-          return new SpotifySearchResult({
+          return new SpotifyTrackSearchResult({
             id: item.id,
             name: item.name,
             type: item.type,
             uri: item.uri,
             artists: artists,
             album: album
+          });
+        });
+      });
+  }
+
+  searchAlbums(query: string): Observable<SpotifyAlbumSearchResult[]> {
+    let params: string = [
+      `q=${query}`,
+      `type=album`
+    ].join('&');
+    let queryUrl: string = `${this.apiBase}search?${params}`;
+
+    return Observable.fromPromise(this.getToken())
+      .flatMap(token => this.http.get(queryUrl, { headers: new Headers({ 'Authorization': `${token.token_type} ${token.access_token}` }) }))
+      .map((response: Response) => {
+        return (<any>response.json()).albums.items.map(item => {
+          var artists = new Array<string>();
+          for (var i = 0; i < item.artists.length; i++) {
+            artists.push(item.artists[i].name);
+          }
+          return new SpotifyAlbumSearchResult({
+            id: item.id,
+            name: item.name,
+            image: item.images[0].url,
+            artists: artists,
+            uri: item.uri
           });
         });
       });
@@ -127,7 +157,7 @@ export var spotifyServiceInjectables: Array<any> = [
 ];
 
 @Component({
-  outputs: ['loading', 'results'],
+  outputs: ['loading', 'tracksResults', 'albumsResults'],
   selector: 'spotify-search-box',
   template: `
    <p>Enter something in the field and see the asynchronous results!</p>
@@ -137,24 +167,26 @@ export var spotifyServiceInjectables: Array<any> = [
 
 export class SpotifySearchBox implements OnInit {
   loading: EventEmitter<boolean> = new EventEmitter<boolean>();
-  results: EventEmitter<SpotifySearchResult[]> = new EventEmitter<SpotifySearchResult[]>();
+  tracksResults: EventEmitter<SpotifyTrackSearchResult[]> = new EventEmitter<SpotifyTrackSearchResult[]>();
+  albumsResults: EventEmitter<SpotifyAlbumSearchResult[]> = new EventEmitter<SpotifyAlbumSearchResult[]>();
 
   constructor(public spotify: SpotifyService,
     private el: ElementRef) {
   }
 
   ngOnInit(): void {
+    //tracks
     Observable.fromEvent(this.el.nativeElement, 'keyup')
       .map((e: any) => e.target.value)
       .filter((text: string) => text.length > 1)
       .debounceTime(250)
       .do(() => this.loading.next(true))
-      .map((query: string) => this.spotify.search(query))
+      .map((query: string) => this.spotify.searchTracks(query))
       .switch()
       .subscribe(
-      (results: SpotifySearchResult[]) => {
+      (tracksResults: SpotifyTrackSearchResult[]) => {
         this.loading.next(false);
-        this.results.next(results);
+        this.tracksResults.next(tracksResults);
       },
       (err: any) => {
         console.log(err);
@@ -164,12 +196,34 @@ export class SpotifySearchBox implements OnInit {
         this.loading.next(false);
       }
       );
+
+    //albums
+    Observable.fromEvent(this.el.nativeElement, 'keyup')
+      .map((e: any) => e.target.value)
+      .filter((text: string) => text.length > 1)
+      .debounceTime(250)
+      .do(() => this.loading.next(true))
+      .map((query: string) => this.spotify.searchAlbums(query))
+      .switch()
+      .subscribe(
+      (albumsResults: SpotifyAlbumSearchResult[]) => {
+        this.loading.next(false);
+        this.albumsResults.next(albumsResults);
+      },
+      (err: any) => {
+        console.log(err);
+        this.loading.next(false);
+      },
+      () => {
+        this.loading.next(false);
+      }
+      )
   }
 }
 
 @Component({
   inputs: ['result'],
-  selector: 'spotify-search-result',
+  selector: 'spotify-tracks-search-result',
   template: `
   <ion-card>
     <ion-item>
@@ -195,8 +249,49 @@ export class SpotifySearchBox implements OnInit {
  `
 })
 
-export class SpotifySearchResultComponent {
-  result: SpotifySearchResult;
+export class SpotifyTracksSearchResultComponent {
+  tracksResult: SpotifyTrackSearchResult;
+
+  constructor(public navCtrl: NavController, public discordApi: DiscordApiProvider) {
+
+  }
+
+  Play(query) {
+    this.discordApi.sendCommand(this.discordApi.Commands.play, query);
+    this.navCtrl.pop();
+  }
+}
+
+@Component({
+  inputs: ['result'],
+  selector: 'spotify-albums-search-result',
+  template: `
+  <ion-card>
+    <ion-item>
+      <ion-avatar item-start>
+      <img src="{{result.image}}">
+    </ion-avatar>
+    <h2>{{result.name}}</h2>
+    <!--<p>{{result.artists}}</p>-->
+    </ion-item>
+    <img src="{{result.image}}">
+    <ion-card-content>
+      <p>Album: {{result.name}}</p>
+    </ion-card-content>
+    <ion-row>
+      <ion-col>
+        <button ion-button icon-left clear small (click)="Play(result.uri)">
+          <ion-icon name="play"></ion-icon>
+          <div>Play</div>
+        </button>
+      </ion-col>
+    </ion-row>
+  </ion-card>
+ `
+})
+
+export class SpotifyAlbumsSearchResultComponent {
+  albumsResult: SpotifyAlbumSearchResult;
 
   constructor(public navCtrl: NavController, public discordApi: DiscordApiProvider) {
 
@@ -213,16 +308,23 @@ export class SpotifySearchResultComponent {
     templateUrl: 'spotify.html'
 })
 export class SpotifyPage {
+  type = "";
+  tracksResults: SpotifyTrackSearchResult[];
+  albumsResults: SpotifyAlbumSearchResult[];
 
-    constructor(public navCtrl: NavController, public navParams: NavParams) { }
+  constructor(public navCtrl: NavController, public navParams: NavParams) {
+    this.type = 'tracks';
+  }
 
     ionViewDidLoad() {
         console.log('ionViewDidLoad SpotifyPage');
     }
 
-    results: SpotifySearchResult[];
+    updateTracksResults(results: SpotifyTrackSearchResult[]): void {
+      this.tracksResults = results;
+    }
 
-    updateResults(results: SpotifySearchResult[]): void {
-      this.results = results;
+    updateAlbumsResults(results: SpotifyAlbumSearchResult[]): void {
+      this.albumsResults = results;
     }
 }
