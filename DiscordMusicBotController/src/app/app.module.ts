@@ -9,7 +9,7 @@ import { ConfigurationPage } from '../pages/configuration/configuration';
 import { ConfigurePage } from '../pages/configure/configure';
 import { DiscordApiProvider } from '../providers/DiscordApi';
 import { AlertsProvider } from '../providers/Alerts';
-import { YoutubePage, youTubeServiceInjectables, YoutubeSearchResultComponent, YoutubeSearchBox } from '../pages/youtube/youtube';
+import { YoutubePage, youTubeServiceInjectables, YoutubeSearchResultComponent, YoutubeChannelSearchResultComponent, YoutubeSearchBox } from '../pages/youtube/youtube';
 import { SpotifyPage, spotifyServiceInjectables, SpotifyTracksSearchResultComponent, SpotifyAlbumsSearchResultComponent, SpotifySearchBox } from '../pages/spotify/spotify';
 
 @NgModule({
@@ -22,6 +22,7 @@ import { SpotifyPage, spotifyServiceInjectables, SpotifyTracksSearchResultCompon
     ConfigurePage,
     YoutubePage,
     YoutubeSearchResultComponent,
+    YoutubeChannelSearchResultComponent,
     YoutubeSearchBox,
     SpotifyPage,
     SpotifyTracksSearchResultComponent,
@@ -42,6 +43,7 @@ import { SpotifyPage, spotifyServiceInjectables, SpotifyTracksSearchResultCompon
     ConfigurePage,
     YoutubePage,
     YoutubeSearchResultComponent,
+    YoutubeChannelSearchResultComponent,
     YoutubeSearchBox,
     SpotifyPage,
     SpotifyTracksSearchResultComponent,

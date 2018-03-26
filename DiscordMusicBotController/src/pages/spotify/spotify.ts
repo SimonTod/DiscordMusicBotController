@@ -251,7 +251,6 @@ export class SpotifyTracksSearchResultComponent {
 
   Play(query) {
     this.discordApi.sendCommand(this.discordApi.Commands.play, query);
-    this.navCtrl.pop();
   }
 }
 
@@ -284,7 +283,6 @@ export class SpotifyAlbumsSearchResultComponent {
 
   Play(query) {
     this.discordApi.sendCommand(this.discordApi.Commands.play, query);
-    this.navCtrl.pop();
   }
 }
 
