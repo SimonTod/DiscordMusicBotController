@@ -57,7 +57,7 @@ export class YouTubeService {
       `key=${this.apiKey}`,
       `part=snippet`,
       `type=video`,
-      `maxResults=10`
+      `maxResults=20`
     ].join('&');
     let queryUrl: string = `${this.apiUrl}?${params}`;
     return this.http.get(queryUrl)
@@ -81,7 +81,7 @@ export class YouTubeService {
       `key=${this.apiKey}`,
       `part=snippet`,
       `type=channel`,
-      `maxResults=10`
+      `maxResults=20`
     ].join('&');
     let queryUrl: string = `${this.apiUrl}?${params}`;
     return this.http.get(queryUrl)
@@ -92,6 +92,30 @@ export class YouTubeService {
             channelTitle: item.snippet.title,
             description: item.snippet.description,
             thumbnailUrl: item.snippet.thumbnails.medium.url
+          });
+        });
+      });
+  }
+
+  searchChannelVideos(channelId: string): Observable<YoutubeSearchResult[]> {
+    let params: string = [
+      `channelId=${channelId}`,
+      `key=${this.apiKey}`,
+      `part=snippet`,
+      `type=video`,
+      `maxResults=50`
+    ].join('&');
+    let queryUrl: string = `${this.apiUrl}?${params}`;
+    return this.http.get(queryUrl)
+      .map((response: Response) => {
+        return (<any>response.json()).items.map(item => {
+          return new YoutubeSearchResult({
+            id: item.id.videoId,
+            title: item.snippet.title,
+            description: item.snippet.description,
+            thumbnailUrl: item.snippet.thumbnails.medium.url,
+            channelTitle: item.snippet.channelTitle,
+            publishedAt: item.snippet.publishedAt
           });
         });
       });
@@ -145,6 +169,7 @@ export class YoutubeSearchBox implements OnInit {
       }
     );
 
+    //channels
     Observable.fromEvent(this.el.nativeElement, 'keyup')
       .map((e: any) => e.target.value)
       .filter((text: string) => text.length > 1)
@@ -164,7 +189,7 @@ export class YoutubeSearchBox implements OnInit {
       () => {
         this.loading.next(false);
       }
-      );
+    );
   }
 }
 
@@ -205,9 +230,9 @@ export class YoutubeSearchResultComponent {
   selector: 'youtube-channels-search-result',
   template: `
   <ion-item>
-    <ion-thumbnail item-start>
+    <ion-avatar item-start>
       <img src="{{result.thumbnailUrl}}">
-    </ion-thumbnail>
+    </ion-avatar>
     <div class="info">
       <h2>{{result.channelTitle}}</h2>
     </div>
@@ -227,6 +252,7 @@ export class YoutubeChannelSearchResultComponent {
   }
 
   OpenChannel(channel) {
+    this.navCtrl.push(YoutubeChannelPage, { channel: channel });
   }
 }
 
@@ -255,4 +281,57 @@ export class YoutubePage {
   updateChannelResults(results: YoutubeChannelSearchResult[]): void {
     this.channelsResults = results;
   }
+}
+
+
+@Component({
+  selector: 'page-youtube-channel',
+  template: `
+    <ion-header>
+      <ion-navbar>
+        <ion-title>YouTube Channel</ion-title>
+      </ion-navbar>
+    </ion-header>
+    <ion-content padding>
+      <div class='container'>
+        <div class="page-header card-background-page">
+          <ion-card>
+            <img src="{{channel.thumbnailUrl}}"/>
+            <div class="card-title">{{channel.channelTitle}}</div>
+            <!--<div class="card-subtitle">41 Listings</div>-->
+          </ion-card>
+        </div>
+    
+        <div class="row">
+          <youtube-search-result *ngFor="let result of results"
+                                 [result]="result">
+          </youtube-search-result>
+        </div>
+
+      </div>
+    </ion-content>
+`
+})
+
+export class YoutubeChannelPage {
+  channel: YoutubeChannelSearchResult;
+  results: YoutubeSearchResult[];
+  test = 'test';
+
+  constructor(public navCtrl: NavController, public navParams: NavParams, public youtube: YouTubeService) {
+    this.channel = this.navParams.get('channel');
+    this.youtube.searchChannelVideos(this.channel.id)
+      .subscribe(
+      (results: YoutubeSearchResult[]) => {
+        this.results = results;
+      },
+      (err: any) => {
+        console.log(err);
+      })
+  }
+
+  ionViewDidLoad() {
+    console.log('ionViewDidLoad YoutubeChannelPage');
+  }
+  
 }
