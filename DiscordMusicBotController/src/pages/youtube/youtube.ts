@@ -73,7 +73,7 @@ export var youTubeServiceInjectables: Array<any> = [
   selector: 'youtube-search-box',
   template: `
    <p>Enter something in the field and see the asynchronous results!</p>
-   <input type="text" class="form-control" placeholder="Search" autofocus>
+   <ion-searchbar type="text" placeholder="Search"></ion-searchbar>
  `
 })
 
@@ -113,27 +113,19 @@ export class YoutubeSearchBox implements OnInit {
   inputs: ['result'],
   selector: 'youtube-search-result',
   template: `
-  <ion-card>
-    <ion-item>
-      <ion-avatar item-start>
+  <ion-item>
+    <ion-thumbnail item-start>
       <img src="{{result.thumbnailUrl}}">
-    </ion-avatar>
-    <h2>{{result.title}}</h2>
-    <p>{{result.channelTitle}}</p>
-    </ion-item>
-    <img src="{{result.thumbnailUrl}}">
-    <ion-card-content>
-      <p>{{result.description}}</p>
-    </ion-card-content>
-    <ion-row>
-      <ion-col>
-        <button ion-button icon-left clear small (click)="Play(result.videoUrl)">
-          <ion-icon name="play"></ion-icon>
-          <div>Play</div>
-        </button>
-      </ion-col>
-    </ion-row>
-  </ion-card>
+    </ion-thumbnail>
+    <div class="info">
+      <h2>{{result.title}}</h2>
+      <p>{{result.channelTitle}}</p>
+    </div>
+    <button ion-button icon-left clear item-end (click)="Play(result.videoUrl)">
+      <ion-icon name="play"></ion-icon>
+      <div>Play</div>
+    </button>
+  </ion-item>
  `
 })
 
@@ -156,16 +148,17 @@ export class YoutubeSearchResultComponent {
 })
 
 export class YoutubePage {
+  type = "";
+  results: YoutubeSearchResult[];
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
-    
+    this.type = 'videos';
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad YoutubePage');
   }
 
-  results: YoutubeSearchResult[];
 
   updateResults(results: YoutubeSearchResult[]): void {
     this.results = results;

@@ -30,8 +30,9 @@
     <div [ngSwitch]="type">
       <div class="row" *ngSwitchCase="'tracks'">
         <spotify-tracks-search-result *ngFor="let result of tracksResults"
-                               [result]="result">
+                                      [result]="result">
         </spotify-tracks-search-result>
+        
       </div>
 
       <div class="row" *ngSwitchCase="'albums'">

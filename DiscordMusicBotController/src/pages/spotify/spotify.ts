@@ -45,7 +45,7 @@ class SpotifyAlbumSearchResult {
   id: string;
   name: string;
   image: string;
-  artists: Array<string>;
+  artists: string;
   uri: string;
 
   constructor(obj?: any) {
@@ -121,7 +121,7 @@ export class SpotifyService {
             id: item.id,
             name: item.name,
             image: item.images[0].url,
-            artists: artists,
+            artists: artists.join(' - '),
             uri: item.uri
           });
         });
@@ -161,7 +161,7 @@ export var spotifyServiceInjectables: Array<any> = [
   selector: 'spotify-search-box',
   template: `
    <p>Enter something in the field and see the asynchronous results!</p>
-   <input type="text" class="form-control" placeholder="Search" autofocus>
+   <ion-searchbar type="text" placeholder="Search"></ion-searchbar>
  `
 })
 
@@ -225,27 +225,20 @@ export class SpotifySearchBox implements OnInit {
   inputs: ['result'],
   selector: 'spotify-tracks-search-result',
   template: `
-  <ion-card>
-    <ion-item>
-      <ion-avatar item-start>
+  <ion-item>
+    <ion-thumbnail item-start>
       <img src="{{result.album.image}}">
-    </ion-avatar>
-    <h2>{{result.name}}</h2>
-    <!--<p>{{result.artists}}</p>-->
-    </ion-item>
-    <img src="{{result.album.image}}">
-    <ion-card-content>
+    </ion-thumbnail>
+    <div class="info">
+      <h2>{{result.name}}</h2>
+      <p>{{result.artists}}</p>
       <p>Album: {{result.album.name}}</p>
-    </ion-card-content>
-    <ion-row>
-      <ion-col>
-        <button ion-button icon-left clear small (click)="Play(result.uri)">
-          <ion-icon name="play"></ion-icon>
-          <div>Play</div>
-        </button>
-      </ion-col>
-    </ion-row>
-  </ion-card>
+    </div>
+    <button ion-button icon-left clear item-end (click)="Play(result.uri)">
+      <ion-icon name="play"></ion-icon>
+      <div>Play</div>
+    </button>
+  </ion-item>
  `
 })
 
@@ -266,27 +259,19 @@ export class SpotifyTracksSearchResultComponent {
   inputs: ['result'],
   selector: 'spotify-albums-search-result',
   template: `
-  <ion-card>
-    <ion-item>
-      <ion-avatar item-start>
+  <ion-item>
+    <ion-thumbnail item-start>
       <img src="{{result.image}}">
-    </ion-avatar>
-    <h2>{{result.name}}</h2>
-    <!--<p>{{result.artists}}</p>-->
-    </ion-item>
-    <img src="{{result.image}}">
-    <ion-card-content>
-      <p>Album: {{result.name}}</p>
-    </ion-card-content>
-    <ion-row>
-      <ion-col>
-        <button ion-button icon-left clear small (click)="Play(result.uri)">
-          <ion-icon name="play"></ion-icon>
-          <div>Play</div>
-        </button>
-      </ion-col>
-    </ion-row>
-  </ion-card>
+    </ion-thumbnail>
+    <div class="info">
+      <h2>{{result.name}}</h2>
+      <p>{{result.artists}}</p>
+    </div>
+    <button ion-button icon-left clear item-end (click)="Play(result.uri)">
+      <ion-icon name="play"></ion-icon>
+      <div>Play</div>
+    </button>
+  </ion-item>
  `
 })
 

@@ -13,13 +13,36 @@
     <div class="row">
       <div class="input-group input-group-lg col-md-12">
         <youtube-search-box (loading)="loading = $event"
-                    (results)="updateResults($event)"></youtube-search-box>
+                            (results)="updateResults($event)"></youtube-search-box>
       </div>
     </div>
-    <div class="row">
-      <youtube-search-result *ngFor="let result of results"
-                     [result]="result">
-      </youtube-search-result>
+    <div padding>
+      <ion-segment [(ngModel)]="type">
+        <ion-segment-button value="videos">
+          Videos
+        </ion-segment-button>
+        <ion-segment-button value="playlists" disabled>
+          Playlists
+        </ion-segment-button>
+      </ion-segment>
     </div>
+    <div [ngSwitch]="type">
+      <div class="row" *ngSwitchCase="'videos'">
+        <youtube-search-result *ngFor="let result of results"
+                               [result]="result">
+        </youtube-search-result>
+      </div>
+
+      <!--<ion-list *ngSwitchCase="'kittens'">
+        <ion-item>
+          <ion-thumbnail item-start>
+            <img src="img/thumbnail-kitten-1.jpg">
+          </ion-thumbnail>
+          <h2>Luna</h2>
+        </ion-item>
+        ...
+      </ion-list>-->
+    </div>
+
   </div>
 </ion-content>

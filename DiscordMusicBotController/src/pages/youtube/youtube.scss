@@ -1,3 +1,15 @@
 page-youtube {
+  youtube-search-result {
+    ion-thumbnail, .info {
+      float: left;
+    }
 
+    ion-thumbnail {
+      margin-right: 10px;
+    }
+
+    button {
+      float: right;
+    }
+  }
 }
