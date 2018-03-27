@@ -3,9 +3,11 @@ import { NavController, NavParams } from 'ionic-angular';
 import { Injectable, OnInit, ElementRef, EventEmitter, Inject } from '@angular/core';
 import { Http, Response, Headers } from '@angular/http';
 import { Observable } from 'rxjs';
+import { Storage } from '@ionic/storage';
 import { DiscordApiProvider } from '../../providers/DiscordApi';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
+import 'rxjs/add/operator/catch';
 
 export var SPOTIFY_CLIENT_ID = "9da65e0f4777402a88185915806a8a24"
 export var SPOTIFY_CLIENT_SECRET = "9510e44710694f5bbf960ad7b8cf2cd6"
@@ -62,6 +64,7 @@ export class SpotifyService {
 
   constructor (
     public http: Http,
+    public storage: Storage,
     @Inject(SPOTIFY_CLIENT_ID) private clientId: string,
     @Inject(SPOTIFY_CLIENT_SECRET) private clientSecret: string,
     @Inject(OAUTH_TOKEN_URL) private oauthTokenUrl,
@@ -70,14 +73,14 @@ export class SpotifyService {
 
   }
 
-  searchTracks(query: string): Observable<SpotifyTrackSearchResult[]> {
+  searchTracks(query: string, newToken: boolean = false): Observable<SpotifyTrackSearchResult[]> {
     let params: string = [
       `q=${query}`,
       `type=track`
     ].join('&');
     let queryUrl: string = `${this.apiBase}search?${params}`;
 
-    return Observable.fromPromise(this.getToken())
+    return Observable.fromPromise(this.getToken(newToken))
       .flatMap(token => this.http.get(queryUrl, { headers: new Headers({ 'Authorization': `${token.token_type} ${token.access_token}` }) }))
       .map((response: Response) => {
         return (<any>response.json()).tracks.items.map(item => {
@@ -99,17 +102,23 @@ export class SpotifyService {
             album: album
           });
         });
+      })
+      .catch((res: Response | any) => {
+        var resJson = res.json();
+        if (resJson.error.status == 400 || resJson.error.status == 401) {
+          return this.searchTracks(query, true);
+        }
       });
   }
 
-  searchAlbums(query: string): Observable<SpotifyAlbumSearchResult[]> {
+  searchAlbums(query: string, newToken: boolean = false): Observable<SpotifyAlbumSearchResult[]> {
     let params: string = [
       `q=${query}`,
       `type=album`
     ].join('&');
     let queryUrl: string = `${this.apiBase}search?${params}`;
 
-    return Observable.fromPromise(this.getToken())
+    return Observable.fromPromise(this.getToken(newToken))
       .flatMap(token => this.http.get(queryUrl, { headers: new Headers({ 'Authorization': `${token.token_type} ${token.access_token}` }) }))
       .map((response: Response) => {
         return (<any>response.json()).albums.items.map(item => {
@@ -125,25 +134,52 @@ export class SpotifyService {
             uri: item.uri
           });
         });
+      })
+      .catch((res: Response | any) => {
+        var resJson = res.json();
+        if (resJson.error.status == 400 || resJson.error.status == 401) {
+          return this.searchAlbums(query, true);
+        }
       });
   }
 
-  getToken(): Promise<Token> {
-    let params: string = "grant_type=client_credentials";
-    let headers = new Headers({
-      'Authorization': "Basic " + btoa(this.clientId + ":" + this.clientSecret),
-      'Content-Type': "application/x-www-form-urlencoded"
-    });
+  getToken(newToken: boolean): Promise<Token> {
+    if (newToken) {
+      let params: string = "grant_type=client_credentials";
+      let headers = new Headers({
+        'Authorization': "Basic " + btoa(this.clientId + ":" + this.clientSecret),
+        'Content-Type': "application/x-www-form-urlencoded"
+      });
 
-    return this.http.post(this.oauthTokenUrl, params, { headers: headers })
-      .toPromise()
-      .then((res: Response) => {
-        let body = res.json();
-        var token = new Token({ access_token: body.access_token, token_type: body.token_type })
-        return token || new Token();
-      })
-      .catch((res: Response | any) => {
-        return Promise.reject(res.json().error || res.message || res);
+      return this.http.post(this.oauthTokenUrl, params, { headers: headers })
+        .toPromise()
+        .then((res: Response) => {
+          let body = res.json();
+          var token = new Token({ access_token: body.access_token, token_type: body.token_type });
+          this.saveToken(token);
+          return token || new Token();
+        })
+        .catch((res: Response | any) => {
+          return Promise.reject(res.json().error || res.message || res);
+        });
+    }
+    else {
+      return this.getTokenFromStorage();
+    }
+  }
+
+  saveToken(token: Token) {
+    this.storage.set('spotifyToken_accessToken', token.access_token);
+    this.storage.set('spotifyToken_tokenType', token.token_type);
+  }
+
+  getTokenFromStorage(): Promise<Token> {
+    return this.storage.get('spotifyToken_accessToken')
+      .then((spotifyToken_accessToken) => {
+        return this.storage.get('spotifyToken_tokenType')
+          .then((spotifyToken_tokenType) => {
+            return new Token({ access_token: spotifyToken_accessToken, token_type: spotifyToken_tokenType });
+          });
       });
   }
 }
