@@ -13,28 +13,33 @@
 
   <h2 class="center">DiscordMusicBotController</h2>
 
-  <button ion-button (click)="Pause()">
-    <ion-icon name="pause"></ion-icon>
-    Pause
-  </button>
+  <div class="center">
+    <button ion-button icon-only round outline large (click)="Pause()">
+      <ion-icon name="pause"></ion-icon>
+      <!--Pause-->
+    </button>
 
-  <button ion-button (click)="Resume()">
-    <ion-icon name="play"></ion-icon>
-    Resume
-  </button>
+    <button ion-button icon-only round outline large id="playButton" (click)="Resume()">
+      <ion-icon name="play"></ion-icon>
+      <!--Resume-->
+    </button>
 
-  <button ion-button (click)="Next()">
-    <ion-icon name="skip-forward"></ion-icon>
-    Next
-  </button>
+    <button ion-button icon-only round outline large (click)="Next()">
+      <ion-icon name="skip-forward"></ion-icon>
+      <!--Next-->
+    </button>
+  </div>
 
-  <button ion-button (click)="Youtube()">
-    <ion-icon name="logo-youtube"></ion-icon>
-    YouTube
-  </button>
+  <div class="center" id="streamServicesButtons">
+    <button ion-button class="youtubeButton" (click)="Youtube()">
+      <ion-icon name="logo-youtube"></ion-icon>
+      YouTube
+    </button>
 
-  <button ion-button (click)="Spotify()">
-    Spotify
-  </button>
+    <button ion-button class="spotifyButton" (click)="Spotify()">
+      <img src="assets/img/spotify-logo.png" />
+      Spotify
+    </button>
+  </div>
 
 </ion-content>

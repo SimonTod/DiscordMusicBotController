@@ -288,7 +288,7 @@ export class YoutubePage {
   selector: 'page-youtube-channel',
   template: `
     <ion-header>
-      <ion-navbar>
+      <ion-navbar color="youtube">
         <ion-title>YouTube Channel</ion-title>
       </ion-navbar>
     </ion-header>
