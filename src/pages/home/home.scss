@@ -1,0 +1,31 @@
+page-home {
+    .center {
+        text-align: center;
+    }
+    
+    .youtubeButton {
+        background-color: map-get($colors, youtube);
+    }
+    
+    .spotifyButton {
+        background-color: map-get($colors, spotify);
+        
+        img {
+            width: 20px;
+        }
+    }
+    
+    .youtubeButton, .spotifyButton {
+        ion-icon, img {
+            margin-right: 5px;
+        }
+    }
+    
+    #playButton {
+        margin: 0 20px;
+    }
+    
+    #streamServicesButtons {
+        padding-top: 20px;
+    }
+}

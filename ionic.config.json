@@ -1,0 +1,7 @@
+{
+  "name": "DiscordMusicBotController-new",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "ionic-angular"
+}
