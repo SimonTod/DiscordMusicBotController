@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="com.simontod.discordmusicbotcontroller" version="0.6.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>MyApp</name>
+    <name>DiscordMusicBotController</name>
     <description>An awesome Ionic/Cordova app.</description>
     <author email="simon@todeschinimail.fr" href="https://github.com/SimonTod/">SimonTod</author>
     <content src="index.html" />
