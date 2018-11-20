@@ -1,5 +1,7 @@
 page-youtube, page-youtube-channel {
   youtube-search-result, youtube-channels-search-result {
+    width: 100%;
+
     ion-thumbnail, ion-avatar, .info {
       float: left;
     }
@@ -8,9 +10,15 @@ page-youtube, page-youtube-channel {
       margin-right: 10px;
     }
 
+    ion-thumbnail > img {
+      object-fit: cover;
+    }
+
     button {
       float: right;
     }
+
+
   }
 
   .card-background-page {
