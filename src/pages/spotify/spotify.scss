@@ -1,5 +1,7 @@
 page-spotify {
   spotify-albums-search-result, spotify-tracks-search-result {
+    width: 100%;
+    
     ion-thumbnail, .info {
       float: left;
     }

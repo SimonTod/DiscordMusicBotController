@@ -11,7 +11,7 @@ import 'rxjs/add/operator/catch';
 
 export var SPOTIFY_CLIENT_ID = "9da65e0f4777402a88185915806a8a24"
 export var SPOTIFY_CLIENT_SECRET = "9510e44710694f5bbf960ad7b8cf2cd6"
-export var OAUTH_TOKEN_URL = 'https://accounts.spotify.com/api/token'
+export var OAUTH_TOKEN_URL = 'http://spotifytokengetter.siju.tk'
 export var API_BASE = 'https://api.spotify.com/v1/'
 
 
@@ -144,13 +144,7 @@ export class SpotifyService {
   getToken(newToken: boolean): Promise<Token> {
     console.log("getToken, newToken="+newToken);
     if (newToken) {
-      let params: string = "grant_type=client_credentials";
-      let headers = new HttpHeaders({
-        'Authorization': "Basic " + btoa(this.clientId + ":" + this.clientSecret),
-        'Content-Type': "application/x-www-form-urlencoded"
-      });
-
-      return this.http.post(this.oauthTokenUrl, params, { headers: headers })
+      return this.http.get(this.oauthTokenUrl)
         .toPromise()
         .then((res: Response | any) => {
           let body = res;
