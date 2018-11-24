@@ -104,7 +104,8 @@ export class SpotifyService {
         });
       })
       .catch((res: Response | any) => {
-        if (res.error.status == 400 || res.error.status == 401) {
+        console.log(res);
+        if (res.status == 400 || res.status == 401) {
           return this.searchTracks(query, true);
         }
       });
@@ -135,7 +136,7 @@ export class SpotifyService {
         });
       })
       .catch((res: Response | any) => {
-        if (res.error.status == 400 || res.error.status == 401) {
+        if (res.status == 400 || res.status == 401) {
           return this.searchAlbums(query, true);
         }
       });
